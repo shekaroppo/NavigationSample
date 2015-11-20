@@ -3,14 +3,10 @@ package shekar.com.myapplication;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
@@ -18,21 +14,11 @@ import butterknife.ButterKnife;
  */
 public class MusicListFragment extends Fragment {
 
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_music_list, container, false);
         ButterKnife.bind(this, rootView);
-        initToolbar();
         return rootView;
-    }
-
-    public void initToolbar(){
-        ((MainActivity)getActivity()).setSupportActionBar(mToolbar);
-        final ActionBar ab = ((AppCompatActivity)getActivity()).getSupportActionBar();
-         ab.setDisplayHomeAsUpEnabled(true);
     }
 }

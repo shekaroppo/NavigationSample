@@ -1,34 +1,45 @@
 package shekar.com.myapplication;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String FRAGMENT_TAG = "home_fragment";
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    private ActionBarDrawerToggle mDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("onCreate", "===");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
+        ButterKnife.bind(this);
+        setToolbar(mToolbar);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigateToBrowser(false);
+        navigateToHomeFragment(false);
     }
 
-    private void navigateToBrowser(boolean addToBackStack) {
+    private void navigateToHomeFragment(boolean addToBackStack) {
+        Log.d("navigateToHomeFragment", "===");
         HomeFragment fragment = getBrowseFragment();
         if (fragment == null) {
             fragment = new HomeFragment();
@@ -47,34 +58,26 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        Log.d("onCreateOptionsMenu", "===");
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        Log.d("onOptionsItemSelected","===");
+        if (mDrawerToggle != null && mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
+        // If not handled by drawerToggle, home needs to be handled by returning to previous
+        if (item != null && item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -102,4 +105,89 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void setToolbar(Toolbar toolbar) {
+        Log.d("setToolbar", "===");
+        setSupportActionBar(toolbar);
+
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+        updateDrawerToggle();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportFragmentManager().addOnBackStackChangedListener(mBackStackChangedListener);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getSupportFragmentManager().removeOnBackStackChangedListener(mBackStackChangedListener);
+    }
+
+
+    private final android.support.v4.app.FragmentManager.OnBackStackChangedListener mBackStackChangedListener =
+            new android.support.v4.app.FragmentManager.OnBackStackChangedListener() {
+                @Override
+                public void onBackStackChanged() {
+                    Log.d("onBackStackChanged","===");
+                    updateDrawerToggle();
+                }
+            };
+
+    protected void updateDrawerToggle() {
+        Log.d("updateDrawerToggle ==:",getSupportFragmentManager().getBackStackEntryCount() + " ");
+        if (mDrawerToggle == null) {
+            return;
+        }
+        boolean isRoot =  getSupportFragmentManager().getBackStackEntryCount() == 0;
+        mDrawerToggle.setDrawerIndicatorEnabled(isRoot);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowHomeEnabled(!isRoot);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(!isRoot);
+            getSupportActionBar().setHomeButtonEnabled(!isRoot);
+        }
+        if (isRoot) {
+            mDrawerToggle.syncState();
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        Log.d("onBackPressed","===");
+        // If the mDrawerLayout is open, back will close it
+        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        // Otherwise, it may return to the previous fragment stack
+        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        } else {
+            // Lastly, it will rely on the system behavior for back
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mDrawerToggle != null) {
+            mDrawerToggle.onConfigurationChanged(newConfig);
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mDrawerToggle != null) {
+            mDrawerToggle.syncState();
+        }
+    }
+
 }

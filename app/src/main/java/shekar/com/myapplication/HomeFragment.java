@@ -9,10 +9,11 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -29,9 +30,6 @@ public class HomeFragment extends Fragment {
     @Bind(R.id.tabs)
     TabLayout mTabLayout;
 
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
-
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +39,20 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, rootView);
-        initToolbar();
         initTabs();
+        setHasOptionsMenu(true);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d("onOptionsItemSelected","===");
+        return super.onOptionsItemSelected(item);
     }
 
     private void initTabs() {
@@ -51,10 +60,6 @@ public class HomeFragment extends Fragment {
         mViewPager.setAdapter(adapter);
         mViewPager.setOffscreenPageLimit(2);
         mTabLayout.setupWithViewPager(mViewPager);
-    }
-
-    public void initToolbar(){
-        ((MainActivity)getActivity()).setSupportActionBar(mToolbar);
     }
 
 }
