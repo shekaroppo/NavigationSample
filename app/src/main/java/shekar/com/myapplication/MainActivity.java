@@ -108,12 +108,9 @@ public class MainActivity extends AppCompatActivity
 
     public void setToolbar(Toolbar toolbar) {
         Log.d("setToolbar", "===");
-        setSupportActionBar(toolbar);
-
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+        setSupportActionBar(mToolbar);
         updateDrawerToggle();
     }
 
