@@ -40,7 +40,7 @@ public class GenresFragment extends Fragment  {
 
     private void navigateToMusicList(boolean addToBackStack) {
         Log.d("navigateToMusicList ==:",getActivity().getSupportFragmentManager().getBackStackEntryCount()+" ");
-        MusicListFragment fragment = getGenreFragment();
+        MusicListFragment fragment = getMusicListFragment();
         if (fragment == null) {
             fragment = new MusicListFragment();
             android.support.v4.app.FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -53,7 +53,7 @@ public class GenresFragment extends Fragment  {
             transaction.commit();
         }
     }
-    private MusicListFragment getGenreFragment() {
+    private MusicListFragment getMusicListFragment() {
         return (MusicListFragment) getActivity().getSupportFragmentManager().findFragmentByTag("MusicList");
     }
 }

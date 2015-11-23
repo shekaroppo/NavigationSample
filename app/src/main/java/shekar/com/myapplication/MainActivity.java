@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.Bind;
@@ -57,14 +56,14 @@ public class MainActivity extends AppCompatActivity
         return (HomeFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        Log.d("onCreateOptionsMenu", "===");
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        super.onCreateOptionsMenu(menu);
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.main, menu);
+//        Log.d("onCreateOptionsMenu", "===");
+//        return true;
+//    }
 
 
     @Override
@@ -90,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
+               Log.d("==","k");
 
         } else if (id == R.id.nav_slideshow) {
 
